@@ -12,6 +12,7 @@ import Todos from '@/components/Todos';
 import Documents from '@/components/Documents';
 import Measures from '@/components/Measures';
 import Insights from '@/components/Insights';
+import Tenancies from '@/components/Tenancies';
 
 const NAV = [
   { id: 'start', label: 'Übersicht', icon: 'M4 12a8 8 0 1 1 16 0M12 12l4-3' },
@@ -21,6 +22,7 @@ const NAV = [
 ];
 
 const MORE = [
+  { id: 'tenancies', label: 'Mietverhältnisse', desc: 'Mieter, Kaution, Fristen' },
   { id: 'measures', label: 'Maßnahmen', desc: 'Renovierung, Gewerke, Kosten' },
   { id: 'stats', label: 'Statistik', desc: 'Rendite, Cashflow, AfA' },
   { id: 'docs', label: 'Dokumente', desc: 'Verträge, Rechnungen, Fotos' },
@@ -168,6 +170,7 @@ export default function Page() {
         {view === 'todos' && <Todos token={token} items={items} />}
         {view === 'docs' && <Documents token={token} items={items} />}
         {view === 'measures' && <Measures token={token} items={items} />}
+        {view === 'tenancies' && <Tenancies token={token} items={items} />}
         {view === 'start' && <Insights token={token} items={items} onGo={go} />}
       </main>
 

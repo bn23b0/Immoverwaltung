@@ -132,6 +132,102 @@ export default function Insights({ token, items, onGo }) {
           );
         }
 
+        // ---- Mietverhaeltnis ----
+
+        if (r.has_tenancy) {
+          // Nebenkostenabrechnung
+          if (!r.billing_done) {
+            const d = r.days_to_billing_deadline;
+            const tone = d < 60 ? 'red' : d < 180 ? 'amber' : 'slate';
+            cards.push(
+              <Card key="nk" tone={tone} title="Nebenkostenabrechnung offen"
+                action={<TodoBtn k={r.id + 'nk'}
+                  title={'Nebenkostenabrechnung ' + r.name + ' erstellen'}
+                  propertyId={r.id} dueDate={r.billing_deadline} />}>
+                Abrechnungszeitraum endete am {fmtDay(r.billing_end)}. Die Abrechnung muss dem
+                Mieter bis zum {fmtDay(r.billing_deadline)} zugehen – {d > 0 ? `noch ${d} Tage`
+                  : `die Frist ist seit ${Math.abs(d)} Tagen abgelaufen`}.
+                Danach sind Nachforderungen in der Regel ausgeschlossen (§ 556 Abs. 3 BGB).
+              </Card>
+            );
+          }
+
+          // Kaution
+          if (r.deposit_too_high) {
+            cards.push(
+              <Card key="kaut" tone="red" title="Kaution zu hoch">
+                {eur(r.deposit_amount)} entsprechen {String(r.deposit_months).replace('.', ',')} Kaltmieten.
+                Zulässig sind höchstens drei (§ 551 BGB) – der übersteigende Teil ist rückforderbar.
+              </Card>
+            );
+          }
+          if (r.deposit_not_separate) {
+            cards.push(
+              <Card key="kauttrenn" tone="amber" title="Kaution nicht getrennt angelegt">
+                Die Kaution muss getrennt vom eigenen Vermögen und insolvenzfest angelegt werden
+                (§ 551 Abs. 3 BGB). Im Mietverhältnis ist dafür kein Haken gesetzt.
+              </Card>
+            );
+          }
+
+          // Mieterhoehung
+          if (r.next_increase_possible) {
+            const possible = new Date(r.next_increase_possible) <= new Date();
+            cards.push(
+              <Card key="erh" tone={possible ? 'emerald' : 'slate'}
+                title={possible ? 'Mieterhöhung möglich' : 'Mieterhöhung gesperrt'}>
+                {possible
+                  ? `Seit ${fmtDay(r.next_increase_possible)} ist die Sperrfrist von zwölf Monaten abgelaufen.`
+                  : `Frühestens ab ${fmtDay(r.next_increase_possible)} – vorher greift die Sperrfrist.`}
+                {' '}Die Kappungsgrenze begrenzt die Erhöhung zusätzlich auf 20 % in drei Jahren,
+                in Gemeinden mit angespanntem Wohnungsmarkt auf 15 %.
+              </Card>
+            );
+          }
+
+          // Miete weicht vom Objekt ab
+          if (r.rent_mismatch) {
+            cards.push(
+              <Card key="mm" tone="amber" title="Kaltmiete stimmt nicht überein">
+                Im Mietvertrag stehen {eur(r.tenancy_cold_rent)}, beim Objekt {eur(r.property_cold_rent)}.
+                Die Statistik rechnet mit dem Wert am Objekt – solange beides auseinanderläuft,
+                sind Cashflow und Rendite falsch.
+              </Card>
+            );
+          }
+
+          // Mietende naht
+          if (r.days_to_tenancy_end != null && r.days_to_tenancy_end > 0 && r.days_to_tenancy_end < 180) {
+            cards.push(
+              <Card key="ende" tone="amber" title="Mietverhältnis endet bald"
+                action={<TodoBtn k={r.id + 'ende'} title={'Nachmieter für ' + r.name + ' suchen'}
+                  propertyId={r.id} />}>
+                Ende am {fmtDay(r.tenancy_end)}, in {r.days_to_tenancy_end} Tagen.
+                Übergabeprotokoll, Endabrechnung und Kautionsrückgabe stehen an.
+              </Card>
+            );
+          }
+        } else if (r.status === 'Vermietet') {
+          cards.push(
+            <Card key="nomiet" tone="amber" title="Kein Mietverhältnis hinterlegt">
+              Das Objekt steht auf „Vermietet", es ist aber kein aktiver Mieter erfasst.
+              Ohne Mietverhältnis laufen die Fristen für Abrechnung und Kaution nicht mit.
+            </Card>
+          );
+        }
+
+        if (r.open_deposits > 0) {
+          cards.push(
+            <Card key="kautoffen" tone="amber"
+              title={`${r.open_deposits} Kaution(en) aus beendeten Mietverhältnissen offen`}
+              action={<TodoBtn k={r.id + 'kautoffen'}
+                title={'Kaution abrechnen und zurückzahlen – ' + r.name} propertyId={r.id} />}>
+              Nach Auszug darf die Kaution nur so lange einbehalten werden, wie eine Prüfung
+              der Ansprüche dauert; üblich sind drei bis sechs Monate.
+            </Card>
+          );
+        }
+
         // Budget
         if (r.planned_total > 0) {
           const over = r.spent_total > r.planned_total;
@@ -166,10 +262,12 @@ export default function Insights({ token, items, onGo }) {
       })}
 
       <p className="text-xs text-slate-400 leading-relaxed">
-        Die Hinweise zur 15-%-Grenze (§ 6 Abs. 1 Nr. 1a EStG), zur Spekulationsfrist (§ 23 EStG)
-        und zur Verrechnung zwischen Schreinerei und Objekt sind Rechenhilfen, keine Steuerberatung.
+        Die Hinweise zur 15-%-Grenze (§ 6 Abs. 1 Nr. 1a EStG), zur Spekulationsfrist (§ 23 EStG),
+        zu Abrechnungsfrist, Kaution und Mieterhöhung (§§ 551, 556, 558 BGB) sowie zur Verrechnung
+        zwischen Schreinerei und Objekt sind Rechenhilfen, keine Rechts- oder Steuerberatung.
         Ob Kosten als Erhaltungsaufwand oder Herstellungskosten gelten und wie die Leistungen des
-        eigenen Betriebs anzusetzen sind, muss dein Steuerberater verbindlich klären.
+        eigenen Betriebs anzusetzen sind, muss dein Steuerberater klären; Fristen und Klauseln
+        aus dem Mietvertrag gehören im Zweifel zur anwaltlichen Prüfung.
       </p>
     </div>
   );
