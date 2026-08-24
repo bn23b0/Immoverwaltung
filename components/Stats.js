@@ -31,8 +31,11 @@ export default function Stats({ token }) {
         <h2 className="text-lg font-semibold mb-3">Portfolio ({pf.count})</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <Tile label="Cashflow p.a. (vor Steuer)" value={eur(pf.cashflow_pre_tax)} sub={eur(pf.cashflow_pre_tax / 12) + ' / Monat'} />
-          <Tile label="Nettomiete p.a." value={eur(pf.net_operating_income)} />
+          <Tile label="Nettomiete p.a." value={eur(pf.net_operating_income)} sub="nach Kosten & Rücklagen" />
           <Tile label="Kapitaldienst p.a." value={eur(pf.annual_debt_service)} />
+          <Tile label="Rücklage Mietausfall p.a." value={eur(pf.reserve_vacancy)} sub="4 % der Kaltmiete" />
+          <Tile label="Rücklage Instandhaltung p.a." value={eur(pf.reserve_maintenance)} sub="1 €/m²/Monat" />
+          <Tile label="Steuerl. Ergebnis p.a." value={eur(pf.taxable_income)} sub="ohne Rücklagen & Tilgung" />
           <Tile label="Aktueller Wert" value={eur(pf.current_value)} sub={'Wertzuwachs ' + eur(pf.appreciation_abs)} />
           <Tile label="Eingesetztes EK" value={eur(pf.equity)} />
           <Tile label="AfA p.a." value={eur(pf.annual_afa)} />
@@ -71,9 +74,10 @@ export default function Stats({ token }) {
       </div>
 
       <p className="text-xs text-slate-400 leading-relaxed">
-        Annahmen: Kaltmiete und laufende Kosten monatlich, laufende Kosten als Aufwand des Eigentümers.
-        Cashflow vor Steuer (kein Grenzsteuersatz hinterlegt). Kapitaldienst = anfänglicher Zins + anfängliche Tilgung, konstant.
-        AfA-Basis = (Kaufpreis + Kaufnebenkosten) × Gebäudeanteil. EK-Rendite nur bei positivem Eigenkapital.
+        Einnahme = Kaltmiete (monatlich × 12), Nebenkosten sind nicht Teil der Einnahme.
+        Abzüge: laufende Kosten, Rücklage Mietausfall (4 % der Kaltmiete) und Instandhaltung (1 €/m²/Monat) – beide senken den Cashflow, nicht die Steuerlast.
+        Kapitaldienst = anfänglicher Zins + Tilgung, konstant. Renovierungskosten erhöhen Gesamtinvestition/EK (keine automatische AfA).
+        Steuerl. Ergebnis = Kaltmiete − laufende Kosten − Zins − AfA.
       </p>
     </div>
   );

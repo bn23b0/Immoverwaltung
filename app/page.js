@@ -6,6 +6,8 @@ import Login from '@/components/Login';
 import PropertyList from '@/components/PropertyList';
 import PropertyForm from '@/components/PropertyForm';
 import Stats from '@/components/Stats';
+import Calendar from '@/components/Calendar';
+import Todos from '@/components/Todos';
 
 export default function Page() {
   const [token, setTok] = useState(null);
@@ -51,7 +53,7 @@ export default function Page() {
   const NavBtn = ({ id, children }) => (
     <button
       onClick={() => { setEditing(null); setView(id); }}
-      className={'px-3 py-1.5 rounded-lg text-sm font-medium ' +
+      className={'px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap ' +
         (view === id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-200')}
     >{children}</button>
   );
@@ -59,15 +61,17 @@ export default function Page() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-10 bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-2">
-          <span className="font-semibold mr-2">Immobilien</span>
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-2 overflow-x-auto">
+          <span className="font-semibold mr-2 shrink-0">Immobilien</span>
           <NavBtn id="list">Objekte</NavBtn>
           <NavBtn id="stats">Statistik</NavBtn>
+          <NavBtn id="calendar">Kalender</NavBtn>
+          <NavBtn id="todos">To-dos</NavBtn>
           <button
             onClick={() => { setEditing(null); setView('form'); }}
-            className="ml-auto px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-900 text-white"
+            className="ml-auto px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-900 text-white shrink-0"
           >+ Neu</button>
-          <button onClick={onLogout} className="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100">Abmelden</button>
+          <button onClick={onLogout} className="px-3 py-1.5 rounded-lg text-sm text-slate-500 hover:bg-slate-100 shrink-0">Abmelden</button>
         </div>
       </header>
       <main className="max-w-4xl mx-auto px-4 py-6">
@@ -82,6 +86,8 @@ export default function Page() {
             onCancel={() => { setEditing(null); setView('list'); }} />
         )}
         {view === 'stats' && <Stats token={token} />}
+        {view === 'calendar' && <Calendar token={token} items={items} />}
+        {view === 'todos' && <Todos token={token} items={items} />}
       </main>
     </div>
   );
