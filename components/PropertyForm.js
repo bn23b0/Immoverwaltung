@@ -50,6 +50,7 @@ export default function PropertyForm({ token, initial, onDone, onCancel }) {
                   <input type={f.type} step={f.step} placeholder={f.ph || ''}
                     value={v[f.k]} onChange={(e) => set(f.k, e.target.value)} />
                 )}
+                {f.hint && <p className="text-[11px] text-slate-400 mt-1 leading-tight">{f.hint}</p>}
               </div>
             ))}
           </div>

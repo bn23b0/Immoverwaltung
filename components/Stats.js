@@ -49,7 +49,10 @@ export default function Stats({ token }) {
           <Tile label="Kaltmiete p.a." value={eur(pf.annual_rent)} sub="ohne Nebenkosten" />
           <Tile label="Kaltmiete n. Rücklagen p.a." value={eur(pf.net_cold_rent_after_reserves)}
             sub="Kaltmiete − Rücklagen" />
-          <Tile label="Laufende Kosten p.a." value={eur(pf.annual_operating_costs)} />
+          <Tile label="Nicht umlagef. Kosten p.a." value={eur(pf.annual_operating_costs)}
+            sub="Verwaltung, Versicherung u. a." />
+          <Tile label="NK-Vorauszahlung p.a." value={eur(pf.annual_utility_prepayment)}
+            sub="durchlaufend – nicht gerechnet" />
           <Tile label="Rücklage Mietausfall p.a." value={eur(pf.reserve_vacancy)} sub="4 % der Kaltmiete" />
           <Tile label="Rücklage Instandhaltung p.a." value={eur(pf.reserve_maintenance)}
             sub={pf.renovation_count
@@ -133,11 +136,12 @@ export default function Stats({ token }) {
       </div>
 
       <p className="text-xs text-slate-400 leading-relaxed">
-        Einnahme = Kaltmiete (monatlich × 12); Nebenkosten sind nicht Teil der Einnahme.
+        Einnahme = Kaltmiete (monatlich × 12). Die Nebenkostenvorauszahlung des Mieters ist ein
+        durchlaufender Posten und geht weder als Einnahme noch als Aufwand in die Rechnung ein.
         „Kaltmiete nach Rücklagen" = Kaltmiete abzüglich Mietausfall- und Instandhaltungsrücklage,
-        ohne laufende Kosten. Die Instandhaltungsrücklage (1 €/m²/Monat) entfällt für Objekte mit
+        Die Instandhaltungsrücklage (1 €/m²/Monat) entfällt für Objekte mit
         Status „in Renovierung". Cashflow zieht zusätzlich laufende Kosten und Kapitaldienst ab.
-        Steuerl. Ergebnis = Kaltmiete − laufende Kosten − Zins − AfA.
+        Cashflow und steuerliches Ergebnis rechnen mit den nicht umlagefähigen Kosten des Eigentümers.
       </p>
     </div>
   );

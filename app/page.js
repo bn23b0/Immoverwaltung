@@ -9,12 +9,14 @@ import PropertyForm from '@/components/PropertyForm';
 import Stats from '@/components/Stats';
 import Calendar from '@/components/Calendar';
 import Todos from '@/components/Todos';
+import Documents from '@/components/Documents';
 
 const NAV = [
   { id: 'list', label: 'Objekte', icon: 'M3 10.5 12 4l9 6.5M5.5 9.5V20h13V9.5' },
   { id: 'stats', label: 'Statistik', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
   { id: 'calendar', label: 'Kalender', icon: 'M7 3v3M17 3v3M3.5 9h17M4 6h16v14H4z' },
   { id: 'todos', label: 'To-dos', icon: 'M4 7h16M4 12h16M4 17h10' },
+  { id: 'docs', label: 'Doks', icon: 'M14 3v5h5M14 3H6v18h12V8l-4-5z' },
 ];
 
 function Icon({ d }) {
@@ -154,21 +156,22 @@ export default function Page() {
         {view === 'stats' && <Stats token={token} />}
         {view === 'calendar' && <Calendar token={token} items={items} />}
         {view === 'todos' && <Todos token={token} items={items} />}
+        {view === 'docs' && <Documents token={token} items={items} />}
       </main>
 
       {/* Untere Navigation nur auf dem Handy */}
       <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-slate-200 safe-bottom">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-6">
           {NAV.map((n) => (
             <button key={n.id} onClick={() => go(n.id)}
-              className={'flex flex-col items-center justify-center gap-0.5 py-2 text-[11px] ' +
+              className={'flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] ' +
                 (view === n.id ? 'text-slate-900 font-semibold' : 'text-slate-500')}>
               <Icon d={n.icon} />
               {n.label}
             </button>
           ))}
           <button onClick={() => go('form')}
-            className={'flex flex-col items-center justify-center gap-0.5 py-2 text-[11px] ' +
+            className={'flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] ' +
               (view === 'form' ? 'text-slate-900 font-semibold' : 'text-slate-500')}>
             <Icon d="M12 5v14M5 12h14" />
             Neu
