@@ -35,7 +35,7 @@ export default function PropertyForm({ token, initial, onDone, onCancel }) {
       {GROUPS.map((g) => (
         <fieldset key={g.title} className="bg-white border border-slate-200 rounded-xl p-4">
           <legend className="text-sm font-semibold text-slate-700 px-1">{g.title}</legend>
-          <div className="grid sm:grid-cols-2 gap-3 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
             {g.fields.map((f) => (
               <div key={f.k} className={f.type === 'textarea' ? 'sm:col-span-2' : ''}>
                 <label className="block mb-1">{f.label}{f.required && ' *'}</label>
@@ -50,6 +50,7 @@ export default function PropertyForm({ token, initial, onDone, onCancel }) {
                   <input type={f.type} step={f.step} placeholder={f.ph || ''}
                     value={v[f.k]} onChange={(e) => set(f.k, e.target.value)} />
                 )}
+                {f.hint && <p className="text-[11px] text-slate-400 mt-1 leading-tight">{f.hint}</p>}
               </div>
             ))}
           </div>
@@ -57,11 +58,13 @@ export default function PropertyForm({ token, initial, onDone, onCancel }) {
       ))}
 
       {err && <p className="text-sm text-red-600">{err}</p>}
-      <div className="flex gap-2">
-        <button disabled={busy} className="px-4 py-2.5 rounded-lg bg-slate-900 text-white font-medium disabled:opacity-50">
+      <div className="flex flex-col-reverse sm:flex-row gap-2">
+        <button type="button" onClick={onCancel}
+          className="px-4 py-3 rounded-lg border border-slate-300 sm:order-2">Abbrechen</button>
+        <button disabled={busy}
+          className="px-4 py-3 rounded-lg bg-slate-900 text-white font-medium disabled:opacity-50 sm:order-1">
           {busy ? 'Speichere…' : 'Speichern'}
         </button>
-        <button type="button" onClick={onCancel} className="px-4 py-2.5 rounded-lg border border-slate-300">Abbrechen</button>
       </div>
     </form>
   );

@@ -1,12 +1,55 @@
 @import "tailwindcss";
 
-:root { color-scheme: light; }
-body { background: #f8fafc; color: #0f172a; }
+:root {
+  color-scheme: light;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  overscroll-behavior-y: contain;
+}
+
+/* 16px verhindert das automatische Zoomen von iOS beim Fokus */
 input:not([type="checkbox"]):not([type="radio"]), select, textarea {
-  width: 100%; border: 1px solid #cbd5e1; border-radius: 0.5rem;
-  padding: 0.5rem 0.625rem; font-size: 0.9rem; background: #fff;
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 16px;
+  line-height: 1.35;
+  background: #fff;
+  min-height: 44px;
 }
+textarea { min-height: 88px; }
+
 input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:focus {
-  outline: none; border-color: #0f172a; box-shadow: 0 0 0 3px rgba(15,23,42,0.1);
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
-label { font-size: 0.8rem; font-weight: 500; color: #475569; }
+
+input[type="checkbox"] { min-height: 0; }
+
+label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+/* Tippflaechen auf dem Handy gross genug */
+button, a[role="button"] { touch-action: manipulation; }
+@media (max-width: 639px) {
+  button { min-height: 44px; }
+}
+
+/* Platz fuer die untere Navigationsleiste */
+.pb-nav { padding-bottom: calc(4.5rem + var(--safe-bottom)); }
+@media (min-width: 640px) { .pb-nav { padding-bottom: 2rem; } }
+
+.safe-bottom { padding-bottom: var(--safe-bottom); }
+.safe-top { padding-top: var(--safe-top); }
